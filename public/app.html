@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>人生旅途</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --paper:#eef1e6;
+  --paper-raised:#f8f9f1;
+  --paper-line:#d9dcc7;
+  --ink:#242f28;
+  --ink-soft:#5c6a60;
+  --ink-faint:#8b968c;
+  --accent:#8a3324;
+  --accent-soft:#c1745c;
+  --accent-ink:#fdf3ee;
+  --gold:#9c7a35;
+  --shadow:rgba(38,51,47,.14);
+  --focus:#4f7a68;
+  --font-display:"Noto Serif SC","Songti SC",serif;
+  --font-body:"Noto Sans SC","PingFang SC",sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#1b211b; --paper-raised:#232a22; --paper-line:#343d33;
+    --ink:#e7e9de; --ink-soft:#a9b3a5; --ink-faint:#75806f;
+    --accent:#e08a6d; --accent-soft:#a6493a; --accent-ink:#2b1712;
+    --gold:#c9a45c; --shadow:rgba(0,0,0,.5); --focus:#7fae98;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#1b211b; --paper-raised:#232a22; --paper-line:#343d33;
+  --ink:#e7e9de; --ink-soft:#a9b3a5; --ink-faint:#75806f;
+  --accent:#e08a6d; --accent-soft:#a6493a; --accent-ink:#2b1712;
+  --gold:#c9a45c; --shadow:rgba(0,0,0,.5); --focus:#7fae98;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-body);}
+button{font-family:inherit;}
+[hidden]{display:none!important;}
+.app{max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;}
+
+/* ---------- shared bits ---------- */
+.seal{border-radius:50%;border:2px solid var(--accent);color:var(--accent);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;flex:none;}
+.seal.big{width:64px;height:64px;font-size:26px;transform:rotate(-4deg);}
+.btn{font-size:15px;font-weight:600;border-radius:14px;padding:14px 18px;cursor:pointer;border:1px solid transparent;min-height:50px;}
+.btn.primary{background:var(--accent);color:var(--accent-ink);}
+.btn.primary:disabled{opacity:.45;cursor:default;}
+.btn.ghost{background:var(--paper-raised);color:var(--ink-soft);border-color:var(--paper-line);}
+.btn.big{width:100%;font-size:17px;}
+.btn.small{min-height:38px;padding:8px 14px;font-size:13.5px;}
+.icon-btn{width:40px;height:40px;flex:none;border-radius:50%;border:1px solid var(--paper-line);background:var(--paper-raised);color:var(--ink-soft);font-size:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+
+/* ---------- cover ---------- */
+.cover{flex:1;display:flex;align-items:center;justify-content:center;padding:32px 24px;}
+.cover-inner{display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;max-width:360px;}
+.cover-inner h1{font-family:var(--font-display);font-size:26px;margin:0;}
+.cover-desc{color:var(--ink-soft);font-size:15px;line-height:1.7;margin:0;}
+.cover-desc b{color:var(--ink);}
+.cover-inner .btn{width:100%;margin-top:6px;}
+
+/* ---------- people picker / add person ---------- */
+.people-list{display:flex;flex-direction:column;gap:10px;width:100%;}
+.person-card{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;background:var(--paper);border:1px solid var(--paper-line);border-radius:14px;padding:14px 16px;cursor:pointer;text-align:left;}
+.person-card .name{font-family:var(--font-display);font-weight:700;font-size:17px;display:block;}
+.person-card .sub{font-size:12px;color:var(--ink-faint);display:block;margin-top:2px;}
+.person-card .arrow{color:var(--ink-faint);flex:none;}
+.preset-chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;}
+.preset-chip{border:1.5px solid var(--gold);color:var(--gold);background:transparent;border-radius:999px;padding:8px 16px;font-size:14px;font-weight:600;cursor:pointer;}
+.preset-chip.active{background:var(--gold);color:var(--accent-ink);}
+.text-field{width:100%;font-family:var(--font-body);font-size:15px;padding:12px 14px;border-radius:10px;border:1px solid var(--paper-line);background:var(--paper);color:var(--ink);}
+.text-field:focus{outline:2px solid var(--focus);outline-offset:1px;}
+textarea.text-field{resize:vertical;line-height:1.6;}
+.custom-fields{width:100%;display:flex;flex-direction:column;gap:10px;}
+.lang-field{width:100%;text-align:left;display:flex;flex-direction:column;gap:6px;}
+.lang-field label{font-size:13px;color:var(--ink-soft);font-weight:600;}
+.lang-hint{font-size:12px;color:var(--ink-faint);line-height:1.6;margin:0;}
+
+/* ---------- interview screen ---------- */
+.screen{display:flex;flex-direction:column;flex:1;padding:14px 16px 24px;gap:14px;}
+.bar{display:flex;align-items:center;gap:10px;position:relative;}
+.bar-mid{flex:1;min-width:0;}
+.more-menu{position:absolute;top:46px;right:0;background:var(--paper-raised);border:1px solid var(--paper-line);border-radius:12px;box-shadow:0 8px 24px var(--shadow);display:flex;flex-direction:column;overflow:hidden;z-index:5;min-width:190px;}
+.more-menu button{display:flex;align-items:center;gap:8px;background:none;border:none;padding:12px 14px;font-size:14px;color:var(--ink);cursor:pointer;text-align:left;}
+.more-menu button:hover{background:var(--paper);}
+.more-menu-label{padding:10px 14px 6px;font-size:11.5px;color:var(--ink-faint);border-bottom:1px solid var(--paper-line);}
+.progress-track{height:6px;border-radius:999px;background:var(--paper-line);overflow:hidden;}
+.progress-fill{height:100%;background:var(--accent);border-radius:999px;transition:width .3s ease;}
+.progress-label{font-size:11.5px;color:var(--ink-faint);margin-top:4px;text-align:center;}
+
+.chapters-strip{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 6px;}
+.chapter-chip{flex:none;width:34px;height:34px;border-radius:50%;border:1.5px solid var(--gold);color:var(--gold);background:transparent;font-family:var(--font-display);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.chapter-chip.active{background:var(--gold);color:var(--accent-ink);}
+
+.card{background:var(--paper-raised);border:1px solid var(--paper-line);border-radius:16px;padding:20px;min-height:150px;display:flex;flex-direction:column;justify-content:center;gap:8px;}
+.card.extra{border-color:var(--accent);}
+.eyebrow{font-size:12.5px;color:var(--gold);font-weight:600;display:flex;align-items:center;gap:8px;}
+.eyebrow .replay{cursor:pointer;border:none;background:none;color:var(--gold);font-size:16px;padding:0;}
+.card.extra .eyebrow{color:var(--accent);}
+#question-text{font-family:var(--font-display);font-size:clamp(21px,6vw,26px);line-height:1.5;margin:0;font-weight:700;}
+.interim{font-size:14px;color:var(--ink-faint);font-style:italic;min-height:18px;}
+
+textarea#answer-input{
+  width:100%;resize:vertical;min-height:88px;font-family:var(--font-body);font-size:16px;line-height:1.6;
+  background:var(--paper-raised);border:1px solid var(--paper-line);border-radius:12px;padding:12px 14px;color:var(--ink);
+}
+textarea#answer-input:focus{outline:2px solid var(--focus);outline-offset:1px;}
+
+.mic-row{display:flex;flex-direction:column;align-items:center;gap:8px;padding:6px 0;}
+.mic-btn{width:84px;height:84px;border-radius:50%;border:none;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;box-shadow:0 8px 20px var(--shadow);}
+.mic-btn.listening{background:var(--accent-soft);}
+.mic-btn.listening::after{content:"";position:absolute;inset:-10px;border-radius:50%;border:2px solid var(--accent-soft);animation:pulse 1.4s ease-out infinite;}
+.mic-btn.unsupported{background:var(--paper-line);color:var(--ink-faint);}
+@keyframes pulse{0%{transform:scale(.9);opacity:.8;}100%{transform:scale(1.35);opacity:0;}}
+@media (prefers-reduced-motion:reduce){.mic-btn.listening::after{animation:none;}}
+.mic-hint{font-size:13px;color:var(--ink-soft);text-align:center;max-width:280px;}
+
+.card.thinking #question-text{color:var(--ink-soft);font-size:17px;font-weight:500;}
+
+.extras-row{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;}
+.photo-preview{display:flex;align-items:center;gap:10px;justify-content:center;}
+.photo-preview img{max-width:120px;max-height:120px;border-radius:10px;border:1px solid var(--paper-line);object-fit:cover;}
+
+.actions{display:flex;gap:10px;margin-top:auto;}
+.actions .btn.ghost{flex:none;}
+.actions .btn.primary{flex:1;}
+
+/* ---------- family questions ---------- */
+#family-questions .text-field{margin-bottom:0;}
+.fq-item{display:flex;flex-direction:column;gap:4px;padding:12px 0;border-bottom:1px solid var(--paper-line);}
+.fq-item:last-child{border-bottom:none;}
+.fq-item .fq-text{font-family:var(--font-display);font-size:15px;}
+.fq-item .fq-meta{font-size:11.5px;color:var(--ink-faint);}
+.fq-empty{color:var(--ink-faint);font-size:13.5px;text-align:center;padding:16px 0;}
+
+/* ---------- memoir photo rows ---------- */
+.photo-row{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px;}
+.photo-row img{width:96px;height:96px;object-fit:cover;border-radius:8px;border:1px solid var(--paper-line);}
+
+/* ---------- done screen ---------- */
+#done .cover-inner{margin:auto;}
+
+/* ---------- memoir screen ---------- */
+.memoir-actions-row{display:flex;gap:8px;}
+.memoir-actions-row .btn{flex:1;}
+.memoir-meta{font-size:12.5px;color:var(--ink-soft);text-align:center;}
+.book{background:var(--paper-raised);border:1px solid var(--paper-line);border-radius:16px;padding:22px 18px;box-shadow:0 10px 30px var(--shadow);flex:1;overflow-y:auto;}
+.book-empty{color:var(--ink-faint);font-size:14px;text-align:center;padding:40px 10px;}
+.memoir-loading,.memoir-error{color:var(--ink-soft);font-family:var(--font-display);font-size:15px;}
+.memoir-error{color:var(--accent);}
+.book h2{font-family:var(--font-display);font-size:19px;font-weight:700;margin:28px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--paper-line);}
+.book h2:first-child{margin-top:0;}
+.book p{font-family:var(--font-display);font-size:15.5px;line-height:1.9;margin:0 0 14px;}
+.book mark{background:none;color:var(--accent);font-weight:700;box-shadow:inset 0 -0.35em 0 var(--accent-soft);padding:0 1px;}
+
+/* ---------- desktop ---------- */
+@media (min-width:760px){
+  .app{max-width:640px;}
+  .screen{padding:24px 8px 32px;}
+  .card{padding:32px;}
+  #question-text{font-size:28px;}
+  .mic-btn{width:96px;height:96px;}
+  .book{padding:40px clamp(20px,6vw,64px);}
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <section id="people" class="cover">
+    <div class="cover-inner">
+      <span class="seal big">忆</span>
+      <h1>人生旅途</h1>
+      <p class="cover-desc">给家里的每一位长辈，各自留一份属于他们自己的人生记录。</p>
+      <div class="people-list" id="people-list"></div>
+      <button id="add-person-btn" class="btn ghost big" type="button">+ 添加一位家人</button>
+    </div>
+  </section>
+
+  <section id="add-person" class="cover" hidden>
+    <div class="cover-inner">
+      <h1>添加家人</h1>
+      <p class="cover-desc">选一个称呼，或者自己填一个。</p>
+      <div class="preset-chips" id="preset-chips"></div>
+      <div class="custom-fields" id="custom-fields" hidden>
+        <input id="custom-label" class="text-field" type="text" placeholder="怎么称呼，比如“外婆”“王秀英”">
+        <input id="custom-spouse" class="text-field" type="text" placeholder="伴侣怎么称呼？可不填，默认“老伴”">
+      </div>
+      <button id="confirm-add-btn" class="btn primary big" type="button" disabled>创建</button>
+      <button id="cancel-add-btn" class="btn ghost big" type="button">取消</button>
+    </div>
+  </section>
+
+  <section id="intake" class="cover" hidden>
+    <div class="cover-inner">
+      <h1 id="intake-title">先说说您的经历</h1>
+      <p class="cover-desc">您这辈子主要做什么、走的是什么样的路？写得越具体，接下来准备的问题就越贴近您的经历——比如"当过兵，转业后在工厂当车间主任"，或者"年轻时摆过摊，后来开厂做服装生意"，或者"当过乡镇干部，后来做到县里"。</p>
+      <textarea id="traj-input" class="text-field" rows="4" placeholder="随便写几句就好，不清楚也可以跳过"></textarea>
+      <div class="mic-row">
+        <button id="traj-mic-btn" class="mic-btn" type="button" aria-label="点击说话">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M12 15a3 3 0 003-3V6a3 3 0 10-6 0v6a3 3 0 003 3zm5-3a5 5 0 01-10 0H5a7 7 0 006 6.92V21h2v-2.08A7 7 0 0019 12h-2z"/></svg>
+        </button>
+        <div class="mic-hint" id="traj-mic-hint">点一下，说说您的经历</div>
+      </div>
+      <div class="lang-field">
+        <label for="speech-lang-select">她/他说话更接近哪一种？</label>
+        <select id="speech-lang-select" class="text-field">
+          <option value="zh-CN">普通话</option>
+          <option value="zh-TW">台湾国语</option>
+          <option value="yue-Hant-HK">粤语／广东话</option>
+        </select>
+        <p class="lang-hint">这决定了语音识别按哪种口音去听。如果她说的是四川话、上海话这类地方方言，浏览器暂时没有专门支持，只能勉强按普通话识别，效果可能一般，建议这种情况多用打字兜底。</p>
+      </div>
+      <p class="cover-desc" id="intake-status" style="min-height:18px;"></p>
+      <button id="generate-questions-btn" class="btn primary big" type="button">生成专属问题</button>
+      <button id="skip-intake-btn" class="btn ghost big" type="button">跳过，先用通用问题</button>
+    </div>
+  </section>
+
+  <section id="cover" class="cover" hidden>
+    <div class="cover-inner">
+      <span class="seal big">忆</span>
+      <h1 id="cover-title">人生旅途</h1>
+      <p class="cover-desc" id="cover-desc">接下来我会一个一个问题问您，您对着手机<b>说话</b>就行，不用打字。想聊多久都可以，随时能停下，下次接着聊。</p>
+      <button id="start-btn" class="btn primary big" type="button" disabled>正在准备…</button>
+    </div>
+  </section>
+
+  <section id="interview" class="screen" hidden>
+    <div class="bar">
+      <button id="prev-btn" class="icon-btn" type="button" aria-label="上一题">‹</button>
+      <div class="bar-mid">
+        <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+        <div class="progress-label" id="progress-label"></div>
+      </div>
+      <button id="more-btn" class="icon-btn" type="button" aria-label="更多">⋯</button>
+      <div class="more-menu" id="more-menu" hidden>
+        <div class="more-menu-label" id="more-menu-label">当前：—</div>
+        <button id="mute-btn" type="button">🔊 朗读：开</button>
+        <button id="memoir-open-btn" type="button">📖 回忆录成稿</button>
+        <button id="family-q-open-btn" type="button">👨‍👩‍👧 家人想问</button>
+        <button id="customize-btn" type="button">🧭 定制专属问题</button>
+        <button id="switch-person-btn" type="button">👪 换一位家人</button>
+      </div>
+    </div>
+
+    <div class="chapters-strip" id="chapters-strip"></div>
+
+    <div class="card" id="question-card">
+      <div class="eyebrow" id="eyebrow"></div>
+      <h2 id="question-text"></h2>
+      <div class="interim" id="interim"></div>
+    </div>
+
+    <textarea id="answer-input" rows="3" lang="zh-CN" placeholder="说的话会自动出现在这里，也可以直接打字……"></textarea>
+
+    <div class="mic-row">
+      <button id="mic-btn" class="mic-btn" type="button" aria-label="点击说话">
+        <svg viewBox="0 0 24 24" width="30" height="30" fill="currentColor"><path d="M12 15a3 3 0 003-3V6a3 3 0 10-6 0v6a3 3 0 003 3zm5-3a5 5 0 01-10 0H5a7 7 0 006 6.92V21h2v-2.08A7 7 0 0019 12h-2z"/></svg>
+      </button>
+      <div class="mic-hint" id="mic-hint">点一下，开始说话</div>
+    </div>
+
+    <div class="extras-row">
+      <button id="add-photo-btn" class="btn ghost small" type="button">📷 加一张照片</button>
+      <input id="photo-input" type="file" accept="image/*" hidden>
+      <button id="play-audio-btn" class="btn ghost small" type="button" hidden>🔊 听听当时怎么说的</button>
+    </div>
+    <div class="photo-preview" id="photo-preview" hidden>
+      <img id="photo-preview-img" alt="">
+      <button id="remove-photo-btn" class="icon-btn" type="button" aria-label="移除照片">✕</button>
+    </div>
+
+    <div class="actions">
+      <button id="skip-btn" class="btn ghost" type="button">跳过这一题</button>
+      <button id="save-btn" class="btn primary" type="button" disabled>保存并下一题</button>
+    </div>
+  </section>
+
+  <section id="family-questions" class="screen" hidden>
+    <div class="bar">
+      <button id="fq-back-btn" class="icon-btn" type="button" aria-label="返回">‹</button>
+      <div class="bar-mid"><div class="memoir-meta">家人想问</div></div>
+      <div style="width:40px"></div>
+    </div>
+    <p class="cover-desc" style="text-align:left;">任何家人都可以在这里留一个想问的问题，下次访谈会优先问这一条。</p>
+    <textarea id="fq-input" class="text-field" rows="2" placeholder="想问她/他什么？比如「你和奶奶第一次见面是什么样的」"></textarea>
+    <input id="fq-from" class="text-field" type="text" placeholder="署名，可不填，比如「小孙女」">
+    <button id="fq-submit-btn" class="btn primary" type="button">提交这个问题</button>
+    <div class="card" id="fq-list" style="margin-top:8px;"></div>
+  </section>
+
+  <section id="done" class="screen" hidden>
+    <div class="cover-inner">
+      <span class="seal big">✓</span>
+      <h1>都聊完啦</h1>
+      <p class="cover-desc" id="done-summary"></p>
+      <button id="review-btn" class="btn ghost big" type="button">回顾问题</button>
+      <button id="goto-memoir-btn" class="btn primary big" type="button">生成回忆录</button>
+      <button id="switch-person-btn-2" class="btn ghost big" type="button">换一位家人</button>
+    </div>
+  </section>
+
+  <section id="memoir" class="screen" hidden>
+    <div class="bar">
+      <button id="back-btn" class="icon-btn" type="button" aria-label="返回">‹</button>
+      <div class="bar-mid"><div class="memoir-meta" id="memoir-meta">还没有生成回忆录</div></div>
+      <div style="width:40px"></div>
+    </div>
+    <div class="memoir-actions-row">
+      <button id="regenerate-btn" class="btn primary" type="button">生成回忆录初稿</button>
+      <button id="download-btn" class="btn ghost" type="button">下载文本</button>
+    </div>
+    <article class="book" id="memoir-content">
+      <p class="book-empty">先聊几句，攒够素材后回来这里一键生成。</p>
+    </article>
+  </section>
+</div>
+
+<script>
+const EARLY_CHAPTERS = [
+  { id:"origin", title:"家世与出生", desc:"生命的起点——家乡、父母、兄弟姐妹",
+    questions:[
+      "您的老家是在哪个省哪个县/村？那时候村子大概是什么样子？",
+      "您是哪一年出生的？听长辈说过您出生那天有什么特别的事吗？",
+      "您父亲是做什么营生的？母亲呢？",
+      "家里兄弟姐妹几个？您排第几，大家都叫您什么小名？",
+      "小时候家里住的房子是什么样的？几间房，土房还是砖房？",
+      "您还记得爷爷奶奶或者外公外婆吗？他们是什么样的人？",
+      "那时候家里的家境算是好还是不好？靠什么维持生活？",
+      "您最早的一段记忆是什么，大概几岁的时候？",
+    ]},
+  { id:"childhood", title:"童年时光", desc:"游戏、伙伴、吃穿用度里的旧时光",
+    questions:[
+      "小时候最要好的朋友是谁？你们经常一起做什么？",
+      "那时候流行玩什么游戏？您最喜欢玩哪一种？",
+      "小时候吃过最难忘的一顿饭是什么？是因为好吃还是因为特殊的日子？",
+      "您几岁开始帮家里干活？做的是什么活儿？",
+      "小时候穿的衣服是自己家做的还是买的？印象最深的一件衣服是什么样？",
+      "您上过学吗？上到几年级，学校是什么样子？",
+      "小时候过年是怎么过的？能吃上肉、穿新衣服吗？",
+      "有没有挨过打或者挨过骂？是因为什么事？",
+    ]},
+  { id:"youth", title:"少年与成长", desc:"从孩子到成年人，学到的手艺和吃过的苦",
+    questions:[
+      "您是什么时候开始学做饭、做针线活的？是谁教您的？",
+      "十几岁的时候，您每天的日子是怎么过的？",
+      "那时候村里或者镇上发生过什么让您印象很深的事吗？",
+      "您有没有想过离开家乡去别的地方？为什么去或者为什么没去？",
+      "十几岁时最让您骄傲的一件事是什么？",
+      "那时候家里最困难的一年是哪一年，是怎么熬过去的？",
+      "您记事以来最早的一次远行是去哪里，为什么去？",
+    ]},
+  { id:"marriage", title:"恋爱与婚姻", desc:"怎么认识{spouse}的，成婚那天的记忆",
+    questions:[
+      "您和{spouse}是怎么认识的？是媒人介绍还是自己认识的？",
+      "您还记得第一次见到{spouse}时的印象吗？",
+      "结婚那年您多大？{spouse}多大？",
+      "结婚那天是什么样的？办了几桌席，有什么风俗？",
+      "结婚的时候您穿的是什么衣服，婚礼是在哪儿办的？",
+      "刚结婚那会儿，你们住在哪里，日子是怎么过的？",
+      "结婚以后，您和{spouse}的父母处得怎么样？",
+      "结婚这么多年，你们吵得最凶的一次是为了什么事？",
+    ]},
+  { id:"motherhood", title:"为人父母", desc:"养育儿女的辛苦与欣慰",
+    questions:[
+      "家里一共有几个孩子？分别是哪年出生的？",
+      "第一个孩子出生的时候，您是什么心情？",
+      "孩子出生那天是在家里还是医院？您还记得当时的情形吗？",
+      "孩子小时候最让您操心的一件事是什么？",
+      "家里最困难养孩子的那几年，是怎么熬过来的？",
+      "您印象最深的一次孩子生病或者出危险的经历是什么？",
+      "孩子们小时候，您最常对他们说的一句话是什么？",
+      "看着孩子们一个个长大成家，您心里是什么滋味？",
+    ]},
+  { id:"daily_life", title:"家常岁月", desc:"过日子的智慧——劳作、手艺与持家",
+    questions:[
+      "您这辈子做过的最拿手的一道菜是什么，是跟谁学的？",
+      "除了带孩子，您平时还要做哪些农活或者家务？",
+      "家里遇到缺钱缺粮的时候，您是怎么想办法的？",
+      "您有没有做过什么手艺活补贴家用，比如针线、编织之类的？",
+      "一天当中您起得最早是几点，最晚睡是几点，都在忙什么？",
+      "家里养过牲口或者种过地吗？印象最深的一次收成或者灾年是什么样的？",
+      "您觉得自己这辈子最辛苦的一段日子是什么时候？",
+    ]},
+];
+
+// 生成/定制的专属章节会插进这里和下面的 LATE_CHAPTERS 之间。
+const LATE_CHAPTERS = [
+  { id:"era", title:"时代变迁", desc:"大时代如何走进一个普通家庭",
+    questions:[
+      "您经历过的最大的社会变化是什么，那时候家里受到什么影响？",
+      "您还记得村里通电、通自来水，或者第一次看到电视是什么时候吗？",
+      "有没有一次物价或政策的变化让家里日子突然变难或者变好？",
+      "您经历过什么让您印象深刻的自然灾害吗？",
+      "改革开放以后，家里的生活发生了什么变化？",
+      "您觉得现在的生活和您年轻时比，最大的不同是什么？",
+    ]},
+  { id:"reflection", title:"晚年感悟", desc:"回望一生，留给后人的话",
+    questions:[
+      "这一辈子，您觉得自己做得最对的一个决定是什么？",
+      "有没有什么事，现在想起来还是觉得遗憾？",
+      "您这辈子最开心、最骄傲的一件事是什么？",
+      "您最想念的一个人是谁，为什么？",
+      "如果能对年轻时候的自己说一句话，您会说什么？",
+      "您最希望子孙后代记住您的哪一点？",
+      "有什么话您一直想对我们说，但一直没说出口？",
+    ]},
+];
+
+const PERSON_PRESETS = [
+  { id:"nainai", label:"奶奶", spouseTerm:"爷爷" },
+  { id:"yeye", label:"爷爷", spouseTerm:"奶奶" },
+  { id:"laolao", label:"姥姥", spouseTerm:"姥爷" },
+  { id:"laoye", label:"姥爷", spouseTerm:"姥姥" },
+];
+
+const CN_NUMERALS = ["一","二","三","四","五","六","七","八","九","十","十一","十二","十三","十四"];
+const EARLY_QUESTION_COUNT = EARLY_CHAPTERS.reduce((n, c) => n + c.questions.length, 0);
+
+function personChapters(person){
+  const custom = (person && person.customChapters) || [];
+  return EARLY_CHAPTERS.concat(custom).concat(LATE_CHAPTERS);
+}
+
+function buildMaster(person){
+  const spouse = (person && person.spouseTerm) || "老伴";
+  const chapters = personChapters(person);
+  const list = [];
+  chapters.forEach((ch, ci) => {
+    const num = CN_NUMERALS[ci] || String(ci + 1);
+    ch.questions.forEach((q, i) => {
+      list.push({ id: ch.id + "_" + i, chapterId: ch.id, chapterTitle: ch.title, chapterNum: num, text: (q || "").replace(/\{spouse\}/g, spouse) });
+    });
+  });
+  return list;
+}
+
+let peopleList = [];       // [{id, label, spouseTerm, progressIndex, memoir, customChapters, traj, speechLang, createdAt, updatedAt}]
+let currentPerson = null;
+let MASTER = [];
+let answersMap = {};      // questionId -> {question, answer, chapterId, chapterTitle, photoUrl?, audioUrl?}
+let extraAnswers = [];    // [{id, chapterId, chapterTitle, question, answer, createdAt, photoUrl?, audioUrl?}]
+let familyQuestions = []; // [{id, text, from, status, createdAt}] — questions other family members left for her
+let mainIndex = 0;
+let pendingExtra = null;  // {chapterId, chapterTitle, question, source: 'ai'|'family', familyQId?} — a live, in-conversation follow-up
+let extraChainDepth = 0;  // how many AI follow-ups deep we are into the current tangent
+const MAX_CHAIN_DEPTH = 2; // after this many, gently return to the planned questions
+let memoirDoc = null;
+let memoirGenerating = false;
+let screenBeforeMemoir = "interview";
+let screenBeforeFamilyQ = "interview";
+let selectedPreset = null; // a PERSON_PRESETS entry, or "custom"
+let pendingPhotoUrl = null; // an uploaded photo URL waiting to be attached to the current answer
+let ttsMuted = false;
+try { ttsMuted = localStorage.getItem("memoir_tts_muted") === "1"; } catch(e) {}
+
+// ---------- backend data layer ----------
+// This app runs behind its own server (see /app/api/*), so every call here
+// is a plain fetch to our own API — no viewer login required, unlike the
+// Claude Artifact version this was ported from.
+async function fetchPeopleList(){
+  try { const res = await fetch("/api/people"); return res.ok ? await res.json() : []; }
+  catch (e) { return []; }
+}
+
+async function persistPerson(person){
+  try {
+    await fetch("/api/people", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(person) });
+  } catch (e) {}
+}
+
+async function updatePerson(id, patch){
+  try {
+    await fetch(`/api/people/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(patch) });
+  } catch (e) {}
+}
+
+async function fetchPersonRecords(id){
+  try {
+    const [am, ex] = await Promise.all([
+      fetch(`/api/people/${id}/answers`).then(r => r.ok ? r.json() : {}),
+      fetch(`/api/people/${id}/extras`).then(r => r.ok ? r.json() : []),
+    ]);
+    return { answersMap: am || {}, extraAnswers: ex || [] };
+  } catch (e) { return { answersMap: {}, extraAnswers: [] }; }
+}
+
+async function saveAnswerRecord(personId, questionId, data){
+  try {
+    await fetch(`/api/people/${personId}/answers`, {
+      method: "PUT", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ questionId, ...data }),
+    });
+  } catch (e) {}
+}
+
+async function saveExtraRecord(personId, data){
+  try {
+    const res = await fetch(`/api/people/${personId}/extras`, {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data),
+    });
+    const j = await res.json();
+    return j.id || ("local-" + Date.now());
+  } catch (e) { return "local-" + Date.now(); }
+}
+
+async function fetchFamilyQuestions(personId){
+  try { const res = await fetch(`/api/people/${personId}/family-questions`); return res.ok ? await res.json() : []; }
+  catch (e) { return []; }
+}
+
+async function addFamilyQuestionRecord(personId, text, from){
+  const local = { id: "local-" + Date.now(), text, from: from || "", status: "pending", createdAt: new Date().toISOString() };
+  try {
+    const res = await fetch(`/api/people/${personId}/family-questions`, {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text, from }),
+    });
+    const j = await res.json();
+    return { ...local, id: j.id || local.id };
+  } catch (e) { return local; }
+}
+
+async function markFamilyQuestionAnswered(personId, qId){
+  try { await fetch(`/api/people/${personId}/family-questions/${qId}`, { method: "PATCH" }); } catch (e) {}
+}
+
+async function uploadFile(fileOrBlob, filename){
+  const form = new FormData();
+  form.append("file", fileOrBlob, filename || fileOrBlob.name || "upload");
+  const res = await fetch("/api/upload", { method: "POST", body: form });
+  if (!res.ok) throw new Error("upload_failed");
+  const j = await res.json();
+  return j.url;
+}
+
+async function askAI(prompt){
+  const res = await fetch("/api/ai/followup", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt }) });
+  const j = await res.json().catch(() => ({}));
+  if (!res.ok) throw { code: j.error || "upstream_error", message: j.message || "" };
+  return j;
+}
+
+async function askAIJson(prompt){
+  const res = await fetch("/api/ai/custom-chapters", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt }) });
+  const j = await res.json().catch(() => ({}));
+  if (!res.ok) throw { code: j.error || "upstream_error", message: j.message || "" };
+  return j.data;
+}
+
+async function askAIStream(prompt, onText){
+  const res = await fetch("/api/ai/memoir", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt }) });
+  if (!res.ok) { const j = await res.json().catch(() => ({})); throw { code: j.error || "upstream_error", message: j.message || "" }; }
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let text = "";
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    text += decoder.decode(value, { stream: true });
+    onText(text);
+  }
+  if (!text.trim()) throw { code: "upstream_error", message: "empty response" };
+  return text;
+}
+
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let answerVoice = null;
+let trajVoice = null;
+
+const el = (id) => document.getElementById(id);
+
+// ---------- helpers ----------
+function escapeHtml(s){ return String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+function currentQuestionObj(){
+  if (pendingExtra) {
+    return {
+      chapterId: pendingExtra.chapterId, chapterTitle: pendingExtra.chapterTitle,
+      question: pendingExtra.question, isExtra: true,
+      source: pendingExtra.source || "ai", familyQId: pendingExtra.familyQId,
+    };
+  }
+  if (mainIndex >= MASTER.length) return null;
+  const m = MASTER[mainIndex];
+  return { chapterId: m.chapterId, chapterTitle: m.chapterTitle, chapterNum: m.chapterNum, question: m.text, isExtra: false, id: m.id };
+}
+
+function showScreen(name){
+  ["people","add-person","intake","cover","interview","done","memoir","family-questions"].forEach(s => { el(s).hidden = (s !== name); });
+}
+
+// ---------- TTS ----------
+function speakQuestion(text){
+  if (ttsMuted || !("speechSynthesis" in window)) return;
+  try {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "zh-CN";
+    u.rate = 0.95;
+    window.speechSynthesis.speak(u);
+  } catch (e) {}
+}
+
+// ---------- speech recognition ----------
+// Reusable voice-input controller: wires one mic button to one text field,
+// so both the interview answer box and the "tell us about them" intake box
+// can be filled by talking instead of typing.
+function createVoiceInput(inputEl, micBtn, hintEl, interimEl, copy, opts = {}){
+  let recognition = null;
+  let listening = false;
+  let voiceUsable = !!SR;
+  let lang = "zh-CN";
+
+  // Best-effort: also keep the actual audio, alongside the transcribed text,
+  // so a later listener can hear it said in her own voice, not just read it.
+  // Never lets a recording problem block the transcription flow itself.
+  let mediaRecorder = null;
+  let mediaStream = null;
+  let audioChunks = [];
+  let lastAudioBlob = null;
+
+  async function ensureRecorder(){
+    if (!opts.captureAudio || !navigator.mediaDevices || !window.MediaRecorder) return null;
+    if (mediaRecorder) return mediaRecorder;
+    try {
+      mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorder = new MediaRecorder(mediaStream);
+      mediaRecorder.ondataavailable = (e) => { if (e.data && e.data.size) audioChunks.push(e.data); };
+      mediaRecorder.onstop = () => {
+        if (audioChunks.length) lastAudioBlob = new Blob(audioChunks, { type: mediaRecorder.mimeType || "audio/webm" });
+        audioChunks = [];
+      };
+      return mediaRecorder;
+    } catch (e) { return null; }
+  }
+
+  function updateUI(){
+    micBtn.classList.toggle("listening", listening);
+    micBtn.classList.toggle("unsupported", !voiceUsable);
+    if (!voiceUsable) hintEl.textContent = copy.unsupported;
+    else if (listening) hintEl.textContent = copy.listening;
+    else hintEl.textContent = copy.idle;
+  }
+
+  function ensureRecognition(){
+    if (recognition || !SR) return recognition;
+    recognition = new SR();
+    recognition.lang = lang;
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.onresult = (ev) => {
+      let interim = "", finalChunk = "";
+      for (let i = ev.resultIndex; i < ev.results.length; i++) {
+        const r = ev.results[i];
+        if (r.isFinal) finalChunk += r[0].transcript; else interim += r[0].transcript;
+      }
+      if (finalChunk) {
+        inputEl.value = inputEl.value ? (inputEl.value + finalChunk) : finalChunk;
+        inputEl.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+      if (interimEl) interimEl.textContent = interim;
+    };
+    recognition.onerror = (ev) => {
+      if (ev.error === "not-allowed" || ev.error === "service-not-allowed") voiceUsable = false;
+      listening = false;
+      updateUI();
+    };
+    recognition.onend = () => { listening = false; updateUI(); };
+    return recognition;
+  }
+
+  micBtn.addEventListener("click", async () => {
+    if (!voiceUsable) return;
+    if (listening) {
+      recognition && recognition.stop();
+      if (mediaRecorder && mediaRecorder.state === "recording") mediaRecorder.stop();
+      return;
+    }
+    const r = ensureRecognition();
+    if (!r) { voiceUsable = false; updateUI(); return; }
+    if (interimEl) interimEl.textContent = "";
+    if (opts.captureAudio) {
+      audioChunks = []; lastAudioBlob = null;
+      const rec = await ensureRecorder();
+      if (rec && rec.state !== "recording") { try { rec.start(); } catch (e) {} }
+    }
+    try { r.start(); listening = true; updateUI(); } catch (e) {}
+  });
+
+  updateUI();
+  return {
+    updateUI,
+    setEnabled(on){ micBtn.disabled = !on; },
+    getAudioBlob(){ return lastAudioBlob; },
+    clearAudioBlob(){ lastAudioBlob = null; },
+    setLang(l){ lang = l || "zh-CN"; if (recognition) recognition.lang = lang; },
+  };
+}
+
+// ---------- rendering ----------
+function renderChaptersStrip(){
+  const cur = currentQuestionObj();
+  const chapters = personChapters(currentPerson);
+  const wrap = el("chapters-strip");
+  wrap.innerHTML = "";
+  chapters.forEach((c, idx) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "chapter-chip" + (cur && cur.chapterId === c.id && !cur.isExtra ? " active" : "");
+    btn.textContent = CN_NUMERALS[idx] || String(idx + 1);
+    btn.title = c.title;
+    btn.addEventListener("click", () => jumpToChapter(c.id));
+    wrap.appendChild(btn);
+  });
+}
+
+function renderQuestion(){
+  const cur = currentQuestionObj();
+  if (!cur) { renderDone(); return; }
+  showScreen("interview");
+  renderChaptersStrip();
+
+  const card = el("question-card");
+  card.classList.remove("thinking");
+  card.classList.toggle("extra", !!cur.isExtra);
+  const eyebrow = el("eyebrow");
+  if (cur.isExtra && cur.source === "family") {
+    eyebrow.innerHTML = `家人想问 <button class="replay" id="replay-btn" type="button" aria-label="朗读问题">🔊</button>`;
+  } else if (cur.isExtra) {
+    eyebrow.innerHTML = `接着聊 · ${escapeHtml(cur.chapterTitle)} <button class="replay" id="replay-btn" type="button" aria-label="朗读问题">🔊</button>`;
+  } else {
+    eyebrow.innerHTML = `${cur.chapterNum} · ${escapeHtml(cur.chapterTitle)} <button class="replay" id="replay-btn" type="button" aria-label="朗读问题">🔊</button>`;
+  }
+  el("replay-btn").addEventListener("click", () => speakQuestion(cur.question));
+
+  el("question-text").textContent = cur.question;
+  el("interim").textContent = "";
+
+  const total = MASTER.length;
+  const shown = Math.min(mainIndex + 1, total);
+  el("progress-fill").style.width = (cur.isExtra ? (mainIndex / total * 100) : (shown / total * 100)) + "%";
+  el("progress-label").textContent = cur.isExtra ? `顺着刚才的话多聊聊 · 主线第 ${mainIndex} / ${total} 题` : `第 ${shown} / ${total} 题`;
+
+  const input = el("answer-input");
+  const saved = cur.isExtra ? null : answersMap[cur.id];
+  input.value = cur.isExtra ? "" : ((saved || {}).answer || "");
+  el("skip-btn").disabled = false;
+  el("mic-btn").disabled = false;
+  updateSaveEnabled();
+
+  pendingPhotoUrl = (saved && saved.photoUrl) || null;
+  el("add-photo-btn").textContent = pendingPhotoUrl ? "📷 换一张照片" : "📷 加一张照片";
+  showPhotoPreview(pendingPhotoUrl);
+  el("play-audio-btn").hidden = !(saved && saved.audioUrl);
+  el("play-audio-btn").onclick = (saved && saved.audioUrl) ? () => playStoredAudio(saved.audioUrl) : null;
+
+  el("prev-btn").disabled = (!cur.isExtra && mainIndex === 0);
+  el("skip-btn").textContent = cur.isExtra ? "不聊这个了，回到原来的问题" : "跳过这一题";
+  el("save-btn").textContent = (mainIndex >= total - 1 && !cur.isExtra) ? "保存并完成" : "保存并下一题";
+
+  speakQuestion(cur.question);
+}
+
+function updateSaveEnabled(){
+  el("save-btn").disabled = el("answer-input").value.trim().length === 0;
+}
+
+function showPhotoPreview(url){
+  const box = el("photo-preview");
+  if (!url) { box.hidden = true; return; }
+  box.hidden = false;
+  el("photo-preview-img").src = url;
+}
+
+function playStoredAudio(url){
+  try { new Audio(url).play().catch(() => {}); } catch (e) {}
+}
+
+function showThinking(){
+  const card = el("question-card");
+  card.classList.add("thinking");
+  el("eyebrow").innerHTML = "";
+  el("question-text").textContent = "稍等，我在琢磨怎么接着您刚才说的往下问……";
+  el("interim").textContent = "";
+  el("save-btn").disabled = true;
+  el("mic-btn").disabled = true;
+  el("skip-btn").disabled = true;
+  el("add-photo-btn").hidden = true;
+  el("play-audio-btn").hidden = true;
+  showPhotoPreview(null);
+}
+
+function renderDone(){
+  showScreen("done");
+  const answeredMain = Object.keys(answersMap).length;
+  el("done-summary").textContent = `一共记录了 ${answeredMain + extraAnswers.length} 条回答。可以生成回忆录初稿了，也可以回顾、补充任何一题。`;
+}
+
+// ---------- navigation ----------
+function jumpToChapter(chapterId){
+  const idx = MASTER.findIndex(m => m.chapterId === chapterId);
+  if (idx < 0) return;
+  pendingExtra = null; extraChainDepth = 0; mainIndex = idx;
+  saveProgress();
+  renderQuestion();
+}
+
+function goPrev(){
+  if (pendingExtra) { pendingExtra = null; extraChainDepth = 0; renderQuestion(); return; }
+  if (mainIndex > 0) { mainIndex--; saveProgress(); renderQuestion(); }
+}
+
+function goSkip(){
+  const cur = currentQuestionObj();
+  if (!cur) return;
+  if (cur.isExtra) { pendingExtra = null; extraChainDepth = 0; }
+  else { mainIndex++; saveProgress(); }
+  renderQuestion();
+}
+
+function saveProgress(){
+  if (!currentPerson) return;
+  currentPerson.progressIndex = mainIndex;
+  updatePerson(currentPerson.id, { progressIndex: mainIndex });
+}
+
+function nextPendingFamilyQuestion(){
+  return familyQuestions.find(q => q.status !== "answered") || null;
+}
+
+async function uploadPendingAudio(){
+  if (!answerVoice || !answerVoice.getAudioBlob) return null;
+  const blob = answerVoice.getAudioBlob();
+  if (answerVoice.clearAudioBlob) answerVoice.clearAudioBlob();
+  if (!blob) return null;
+  try { return await uploadFile(blob, "answer.webm"); } catch (e) { return null; }
+}
+
+async function saveCurrent(){
+  const val = el("answer-input").value.trim();
+  const cur = currentQuestionObj();
+  if (!val || !cur) return;
+  el("save-btn").disabled = true;
+  el("mic-btn").disabled = true;
+  el("skip-btn").disabled = true;
+
+  const photoUrl = pendingPhotoUrl;
+  const audioUrl = await uploadPendingAudio();
+  pendingPhotoUrl = null;
+
+  if (cur.isExtra) {
+    const data = { chapterId: cur.chapterId, chapterTitle: cur.chapterTitle, question: cur.question, answer: val, createdAt: new Date().toISOString() };
+    if (photoUrl) data.photoUrl = photoUrl;
+    if (audioUrl) data.audioUrl = audioUrl;
+    const wasFamily = cur.source === "family" && cur.familyQId;
+    if (wasFamily) {
+      await markFamilyQuestionAnswered(currentPerson.id, cur.familyQId);
+      const fq = familyQuestions.find(q => q.id === cur.familyQId);
+      if (fq) fq.status = "answered";
+    }
+    const id = await saveExtraRecord(currentPerson.id, data);
+    extraAnswers.push({ id, ...data });
+    pendingExtra = null;
+
+    if (wasFamily) {
+      const nextFq = nextPendingFamilyQuestion();
+      if (nextFq) { pendingExtra = { source: "family", chapterId: "family_questions", chapterTitle: "家人想问的", question: nextFq.text, familyQId: nextFq.id }; renderQuestion(); }
+      else renderQuestion();
+    } else {
+      await continueFromAnswer(cur.chapterId, cur.question, val, true);
+    }
+  } else {
+    const data = { chapterId: cur.chapterId, chapterTitle: cur.chapterTitle, question: cur.question, answer: val, updatedAt: new Date().toISOString() };
+    if (photoUrl) data.photoUrl = photoUrl;
+    if (audioUrl) data.audioUrl = audioUrl;
+    answersMap[cur.id] = data;
+    await saveAnswerRecord(currentPerson.id, cur.id, data);
+    mainIndex++;
+    saveProgress();
+    extraChainDepth = 0;
+
+    const fq = nextPendingFamilyQuestion();
+    if (fq) {
+      pendingExtra = { source: "family", chapterId: "family_questions", chapterTitle: "家人想问的", question: fq.text, familyQId: fq.id };
+      renderQuestion();
+    } else {
+      await continueFromAnswer(cur.chapterId, cur.question, val, false);
+    }
+  }
+}
+
+// After every answer, check whether she wandered onto something worth following —
+// if so, the very next question picks up that thread instead of jumping to the script.
+async function continueFromAnswer(chapterId, question, answer, wasExtra){
+  if (wasExtra && extraChainDepth >= MAX_CHAIN_DEPTH) {
+    pendingExtra = null;
+    renderQuestion();
+    return;
+  }
+
+  showThinking();
+  const chapter = personChapters(currentPerson).find(c => c.id === chapterId);
+  const upcoming = mainIndex < MASTER.length ? MASTER[mainIndex].text : null;
+  const label = currentPerson ? currentPerson.label : "受访者";
+  const prompt = `你在帮一个家庭给${label}做口述访谈。当前主题："${chapter.title}"。\n${label}刚才被问："${question}"\n${label}的回答："${answer}"\n\n接下来计划要问的下一个问题是：${upcoming ? `"${upcoming}"` : "（这个主题已经问完了）"}\n\n请判断：这段回答里，是不是顺嘴带出了一件事、一个人或一个场景，跟计划里的下一个问题不太一样，但很值得接着追问、让${label}多讲讲？\n- 如果是，请直接写一个自然的追问，像日常聊天一样承接刚才提到的那个具体细节，不要生硬地转回原来的主题；\n- 如果回答本来就切题、没有明显值得深挖的旁支，就只回复"无"这一个字。\n要求：只输出追问本身或"无"，不要解释、不要加引号，问题要具体、容易回答，不超过两句话。`;
+  try {
+    const res = await askAI(prompt);
+    const text = res.text.trim().replace(/^["“]|["”]$/g, "");
+    if (text && text !== "无" && !/^没有/.test(text)) {
+      pendingExtra = { chapterId, chapterTitle: chapter.title, question: text };
+      extraChainDepth++;
+    } else {
+      pendingExtra = null;
+    }
+  } catch (e) {
+    pendingExtra = null;
+  }
+  renderQuestion();
+}
+
+// ---------- memoir ----------
+function groupedForMemoir(){
+  const groups = personChapters(currentPerson).map(ch => {
+    const mains = MASTER.filter(m => m.chapterId === ch.id)
+      .map(m => ({ question: m.text, answer: (answersMap[m.id] || {}).answer, photoUrl: (answersMap[m.id] || {}).photoUrl }))
+      .filter(x => x.answer);
+    const extras = extraAnswers.filter(e => e.chapterId === ch.id).map(e => ({ question: e.question, answer: e.answer, photoUrl: e.photoUrl }));
+    return { chapter: ch, items: mains.concat(extras) };
+  }).filter(g => g.items.length > 0);
+
+  const familyItems = extraAnswers.filter(e => e.chapterId === "family_questions")
+    .map(e => ({ question: e.question, answer: e.answer, photoUrl: e.photoUrl }));
+  if (familyItems.length > 0) groups.push({ chapter: { id: "family_questions", title: "家人想问的" }, items: familyItems });
+
+  return groups;
+}
+
+function totalAnswered(){
+  return Object.keys(answersMap).length + extraAnswers.length;
+}
+
+function renderMarkdownLite(md){
+  const inline = s => escapeHtml(s).replace(/\*\*(.+?)\*\*/g, "<mark>$1</mark>");
+  return md.split(/\n\s*\n/).map(block => {
+    const line = block.trim();
+    if (!line) return "";
+    if (line.startsWith("## ")) return `<h2>${inline(line.slice(3))}</h2>`;
+    if (line.startsWith("# ")) return `<h2>${inline(line.slice(2))}</h2>`;
+    return `<p>${inline(line).replace(/\n/g, "<br>")}</p>`;
+  }).join("\n");
+}
+
+function errorCopy(e){
+  const map = {
+    not_configured: "AI 还没配置好（缺少 API key），请联系维护这个网站的人。",
+    rate_limited: "请求太多了，请稍等一会儿再试。",
+    upstream_error: "AI 服务暂时出了点问题，请重试。",
+  };
+  return map[e && e.code] || (e && e.message) || "生成失败，请重试。";
+}
+
+function renderMemoirMeta(){
+  const total = totalAnswered();
+  if (!memoirDoc) { el("memoir-meta").textContent = total ? `已记录 ${total} 条，还没有生成回忆录` : "还没有生成回忆录"; return; }
+  const when = new Date(memoirDoc.updatedAt).toLocaleString("zh-CN");
+  el("memoir-meta").textContent = `${memoirDoc.ai ? "AI 执笔" : "整理稿"} · 基于 ${memoirDoc.entryCount} 条访谈 · 更新于 ${when}`;
+}
+
+function renderMemoirArticle(){
+  const article = el("memoir-content");
+  if (memoirDoc && memoirDoc.content) {
+    article.innerHTML = renderMarkdownLite(memoirDoc.content);
+    injectChapterPhotos(article);
+  } else if (!memoirGenerating) {
+    article.innerHTML = `<p class="book-empty">先聊几句，攒够素材后回来这里一键生成。</p>`;
+  }
+  el("download-btn").disabled = !(memoirDoc && memoirDoc.content);
+}
+
+// Drop any photos attached during the interview under the matching chapter
+// heading, in the same order the chapters appear — a plain text placeholder
+// in a downloaded doc becomes a real inline photo here.
+function injectChapterPhotos(article){
+  const groups = groupedForMemoir();
+  const headings = article.querySelectorAll("h2");
+  groups.forEach((g, i) => {
+    const heading = headings[i];
+    if (!heading) return;
+    const urls = g.items.map(x => x.photoUrl).filter(Boolean);
+    if (urls.length === 0) return;
+    const row = document.createElement("div");
+    row.className = "photo-row";
+    urls.forEach(url => {
+      const img = document.createElement("img");
+      img.src = url;
+      img.alt = "";
+      row.appendChild(img);
+    });
+    heading.after(row);
+  });
+}
+
+async function generateMemoir(){
+  if (memoirGenerating) return;
+  const grouped = groupedForMemoir();
+  if (grouped.length === 0) return;
+  memoirGenerating = true;
+  const btn = el("regenerate-btn");
+  btn.disabled = true; btn.textContent = "正在生成…";
+  const article = el("memoir-content");
+  const label = currentPerson ? currentPerson.label : "受访者";
+
+  const body = grouped.map(g => `## ${g.chapter.title}\n` + g.items.map(e => `问：${e.question}\n答：${e.answer}`).join("\n\n")).join("\n\n");
+  const prompt = `你是一位家族回忆录的整理者。下面是家人访谈${label}后记录下来的一问一答素材，请你把它们整理成一篇第一人称自传体回忆录，用"我"的口吻讲述（${label}本人的口吻）。\n\n要求（这一条最重要）：尽量贴近她原话的说法和用词，只做"连接"，不做"创作"——去掉"问：""答："字样和重复的问题本身，把几句话顺成一段就行，不要替她编心理活动、比喻、抒情句，也不要加"心里五味杂陈""往事历历在目"这类她没说过的套话式总结。宁可读起来像大白话、有点碎，也不要读起来像作家写的。\n\n其他要求：\n1. 严格按照素材里出现的章节顺序组织内容，每个章节用二级标题"## 章节名"开头；\n2. 只使用素材里出现过的事实和细节，不要编造素材里没有提到的人名、地名、具体数字或情节，也不要补写素材没提到的场景或对话；\n3. 每个章节挑一两句她原话里最具体、最打动人的话，一字不改地用双星号包裹加粗，例如**像这样**，不要改写这句话本身；\n4. 语言朴实、口语化，像一位老人平常说话的样子，短句为主，不要用书面语连接词（比如"然而""与此同时"）；\n5. 不要添加开头结尾的客套话，直接从第一个章节标题开始写。\n\n素材：\n\n${body}`;
+
+  article.innerHTML = `<p class="memoir-loading">正在为${label}执笔……</p>`;
+  try {
+    const text = await askAIStream(prompt, (t) => { article.innerHTML = renderMarkdownLite(t); injectChapterPhotos(article); });
+    memoirDoc = { content: text, updatedAt: new Date().toISOString(), entryCount: totalAnswered(), ai: true };
+    await saveMemoirDoc();
+    renderMemoirMeta(); renderMemoirArticle();
+  } catch (e) {
+    // Fall back to a plain, un-written compilation rather than just an error
+    // — it's still a usable draft, and nothing she said gets lost.
+    const content = grouped.map(g => `## ${g.chapter.title}\n\n` + g.items.map(x => `**${x.question}**\n\n${x.answer}`).join("\n\n")).join("\n\n");
+    memoirDoc = { content, updatedAt: new Date().toISOString(), entryCount: totalAnswered(), ai: false };
+    await saveMemoirDoc();
+    renderMemoirMeta(); renderMemoirArticle();
+  }
+  memoirGenerating = false;
+  btn.disabled = false; btn.textContent = "生成回忆录初稿";
+}
+
+async function saveMemoirDoc(){
+  if (!currentPerson) return;
+  currentPerson.memoir = memoirDoc;
+  await updatePerson(currentPerson.id, { memoir: memoirDoc });
+}
+
+function downloadMemoir(){
+  if (!memoirDoc || !memoirDoc.content) return;
+  const label = currentPerson ? currentPerson.label : "家人";
+  const blob = new Blob([memoirDoc.content], { type: "text/markdown;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${label}的回忆录.md`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function openMemoir(){
+  screenBeforeMemoir = el("done").hidden ? "interview" : "done";
+  showScreen("memoir");
+  renderMemoirMeta(); renderMemoirArticle();
+}
+function closeMemoir(){
+  if (screenBeforeMemoir === "done") renderDone(); else renderQuestion();
+}
+
+// ---------- family-submitted questions ----------
+function renderFamilyQuestionsList(){
+  const wrap = el("fq-list");
+  const pending = familyQuestions.filter(q => q.status !== "answered");
+  if (pending.length === 0) { wrap.innerHTML = `<p class="fq-empty">还没有家人留问题，写第一个吧。</p>`; return; }
+  wrap.innerHTML = "";
+  pending.forEach(q => {
+    const item = document.createElement("button");
+    item.type = "button";
+    item.className = "fq-item";
+    item.style.cssText = "width:100%;background:none;border:none;text-align:left;cursor:pointer;";
+    item.innerHTML = `<div class="fq-text">${escapeHtml(q.text)}</div><div class="fq-meta">${q.from ? escapeHtml(q.from) + " · " : ""}点这里现在就问她</div>`;
+    item.addEventListener("click", () => {
+      pendingExtra = { source: "family", chapterId: "family_questions", chapterTitle: "家人想问的", question: q.text, familyQId: q.id };
+      renderQuestion();
+    });
+    wrap.appendChild(item);
+  });
+}
+
+function openFamilyQuestions(){
+  screenBeforeFamilyQ = el("done").hidden ? "interview" : "done";
+  el("fq-input").value = "";
+  el("fq-from").value = "";
+  renderFamilyQuestionsList();
+  showScreen("family-questions");
+}
+function closeFamilyQuestions(){
+  if (screenBeforeFamilyQ === "done") renderDone(); else renderQuestion();
+}
+
+async function submitFamilyQuestion(){
+  const text = el("fq-input").value.trim();
+  if (!text || !currentPerson) return;
+  const from = el("fq-from").value.trim();
+  const btn = el("fq-submit-btn");
+  btn.disabled = true;
+  const item = await addFamilyQuestionRecord(currentPerson.id, text, from);
+  familyQuestions.push(item);
+  el("fq-input").value = "";
+  el("fq-from").value = "";
+  renderFamilyQuestionsList();
+  btn.disabled = false;
+}
+
+// ---------- people ----------
+function renderPeopleList(){
+  const wrap = el("people-list");
+  wrap.innerHTML = "";
+  if (peopleList.length === 0) {
+    const p = document.createElement("p");
+    p.className = "cover-desc";
+    p.textContent = "还没有添加任何家人，点下面开始第一位。";
+    wrap.appendChild(p);
+    return;
+  }
+  peopleList.forEach(p => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "person-card";
+    const sub = p.progressIndex > 0 ? `已经聊到第 ${p.progressIndex} 题` : "还没开始";
+    btn.innerHTML = `<span><span class="name">${escapeHtml(p.label)}</span><span class="sub">${sub}</span></span><span class="arrow">›</span>`;
+    btn.addEventListener("click", () => selectPerson(p));
+    wrap.appendChild(btn);
+  });
+}
+
+async function selectPerson(person){
+  currentPerson = person;
+  MASTER = buildMaster(person);
+  answersMap = {}; extraAnswers = []; pendingExtra = null; extraChainDepth = 0; pendingPhotoUrl = null;
+  mainIndex = person.progressIndex || 0;
+  memoirDoc = person.memoir || null;
+
+  const records = await fetchPersonRecords(person.id);
+  answersMap = records.answersMap;
+  extraAnswers = records.extraAnswers;
+  familyQuestions = await fetchFamilyQuestions(person.id);
+  if (answerVoice) answerVoice.setLang(person.speechLang || "zh-CN");
+
+  el("cover-title").textContent = "您的一生";
+  el("more-menu-label").textContent = `当前：${person.label}`;
+  el("cover-desc").innerHTML = `接下来我会一个一个问题问您，您对着手机<b>说话</b>就行，不用打字。想聊多久都可以，随时能停下，下次接着聊。`;
+  el("start-btn").disabled = false;
+  el("start-btn").textContent = (mainIndex > 0 || totalAnswered() > 0) ? "继续聊" : "开始";
+  renderMemoirMeta();
+  showScreen("cover");
+}
+
+async function createPerson(data){
+  const person = { label: data.label, spouseTerm: data.spouseTerm || "老伴", speechLang: "zh-CN" };
+  const saved = await fetch("/api/people", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(person) })
+    .then(r => r.json()).catch(() => null);
+  const final = saved || { id: "p" + Date.now().toString(36), ...person, progressIndex: 0, memoir: null, customChapters: [], traj: "" };
+  peopleList.push(final);
+  showIntake(final);
+}
+
+// ---------- intake: learn the person's trajectory, then tailor questions ----------
+let intakePerson = null;
+
+function showIntake(person){
+  intakePerson = person;
+  el("intake-title").textContent = "先说说您的经历";
+  el("traj-input").value = person.traj || "";
+  el("speech-lang-select").value = person.speechLang || "zh-CN";
+  el("intake-status").textContent = "";
+  el("generate-questions-btn").disabled = false;
+  el("generate-questions-btn").textContent = "生成专属问题";
+  const hasCustom = (person.customChapters || []).length > 0;
+  el("skip-intake-btn").textContent = hasCustom ? "先不改，保持现在的问题" : "跳过，先用通用问题";
+  showScreen("intake");
+}
+
+async function generateCustomChapters(person, traj){
+  const prompt = `你在帮一个家庭设计一份口述历史访谈提纲，用来采访${person.label}。
+
+家人对${person.label}人生经历的描述：
+"""
+${traj}
+"""
+
+已经有一套通用问题，覆盖了：家世出生、童年、少年成长、恋爱婚姻、为人父母、家常岁月、时代变迁、晚年感悟。不要重复这些内容，而是专门针对上面这段描述里提到的、有个人特色的经历（比如具体的职业、行业、身份、特殊经历），设计 1 到 3 个新的章节，让访谈能问出这个人独一无二的轨迹，而不是泛泛的问题。
+
+每个章节包含：
+- title：4到8个字的章节标题，例如"下海经商""仕途沉浮""军旅岁月"
+- desc：一句话说明这章聊什么
+- questions：6到8个具体、容易回答的问题，用"您"称呼${person.label}本人；问题要落在某一件事、某一个阶段、某一个决定上，不要问空泛的问题（参考语气："您还记得第一次……吗""当时您是怎么想的""后来怎么样了"）
+
+只返回 JSON，格式：
+[{"title": "...", "desc": "...", "questions": ["...", "..."]}]
+
+如果这段描述里确实没有什么独特具体的经历可以展开，就返回空数组 []。`;
+  try {
+    const data = await askAIJson(prompt);
+    if (!Array.isArray(data)) return [];
+    return data
+      .filter(c => c && typeof c.title === "string" && Array.isArray(c.questions) && c.questions.length > 0)
+      .slice(0, 3)
+      .map((c, idx) => ({
+        id: "custom_" + idx + "_" + Date.now().toString(36),
+        title: String(c.title).slice(0, 20),
+        desc: String(c.desc || "").slice(0, 60),
+        questions: c.questions.filter(q => typeof q === "string" && q.trim()).slice(0, 8).map(q => q.trim()),
+      }));
+  } catch (e) {
+    el("intake-status").textContent = "没能生成专属问题（" + errorCopy(e) + "），先用通用问题吧。";
+    return [];
+  }
+}
+
+function renderPresetChips(){
+  const wrap = el("preset-chips");
+  wrap.innerHTML = "";
+  PERSON_PRESETS.forEach(p => {
+    const btn = document.createElement("button");
+    btn.type = "button"; btn.className = "preset-chip"; btn.textContent = p.label;
+    btn.addEventListener("click", () => choosePreset(p, btn));
+    wrap.appendChild(btn);
+  });
+  const customBtn = document.createElement("button");
+  customBtn.type = "button"; customBtn.className = "preset-chip"; customBtn.textContent = "其他";
+  customBtn.addEventListener("click", () => choosePreset("custom", customBtn));
+  wrap.appendChild(customBtn);
+}
+
+function choosePreset(p, btnEl){
+  selectedPreset = p;
+  document.querySelectorAll("#preset-chips .preset-chip").forEach(b => b.classList.remove("active"));
+  btnEl.classList.add("active");
+  const isCustom = p === "custom";
+  el("custom-fields").hidden = !isCustom;
+  el("confirm-add-btn").disabled = isCustom ? (el("custom-label").value.trim() === "") : false;
+}
+
+function resetAddPersonForm(){
+  selectedPreset = null;
+  document.querySelectorAll("#preset-chips .preset-chip").forEach(b => b.classList.remove("active"));
+  el("custom-fields").hidden = true;
+  el("custom-label").value = "";
+  el("custom-spouse").value = "";
+  el("confirm-add-btn").disabled = true;
+}
+
+function goToPeople(){
+  el("more-menu").hidden = true;
+  renderPeopleList();
+  showScreen("people");
+}
+
+// ---------- wiring ----------
+function updateMuteLabel(){
+  el("mute-btn").textContent = ttsMuted ? "🔇 朗读：关" : "🔊 朗读：开";
+}
+
+function wireUI(){
+  el("prev-btn").addEventListener("click", goPrev);
+  el("skip-btn").addEventListener("click", goSkip);
+  el("save-btn").addEventListener("click", saveCurrent);
+  el("answer-input").addEventListener("input", updateSaveEnabled);
+  answerVoice = createVoiceInput(el("answer-input"), el("mic-btn"), el("mic-hint"), el("interim"), {
+    unsupported: "这台设备暂不支持语音识别：请直接打字，或点输入框、用手机输入法自带的麦克风键说话",
+    listening: "正在听您说话…说完点一下结束",
+    idle: "点一下，开始说话",
+  }, { captureAudio: true });
+  trajVoice = createVoiceInput(el("traj-input"), el("traj-mic-btn"), el("traj-mic-hint"), null, {
+    unsupported: "这台设备暂不支持语音识别，直接打字就好",
+    listening: "在听…说完点一下结束",
+    idle: "点一下，说说您的经历",
+  });
+
+  el("add-photo-btn").addEventListener("click", () => el("photo-input").click());
+  el("photo-input").addEventListener("change", async () => {
+    const file = el("photo-input").files && el("photo-input").files[0];
+    el("photo-input").value = "";
+    if (!file) return;
+    const btn = el("add-photo-btn");
+    btn.disabled = true; btn.textContent = "正在上传照片…";
+    try {
+      pendingPhotoUrl = await uploadFile(file);
+      showPhotoPreview(pendingPhotoUrl);
+    } catch (e) {} finally {
+      btn.disabled = false;
+      btn.textContent = pendingPhotoUrl ? "📷 换一张照片" : "📷 加一张照片";
+    }
+  });
+  el("remove-photo-btn").addEventListener("click", () => {
+    pendingPhotoUrl = null;
+    showPhotoPreview(null);
+    el("add-photo-btn").textContent = "📷 加一张照片";
+  });
+  el("more-btn").addEventListener("click", (ev) => { ev.stopPropagation(); el("more-menu").hidden = !el("more-menu").hidden; });
+  document.addEventListener("click", (ev) => {
+    const menu = el("more-menu");
+    if (!menu.hidden && !menu.contains(ev.target) && ev.target !== el("more-btn")) menu.hidden = true;
+  });
+  el("memoir-open-btn").addEventListener("click", () => { el("more-menu").hidden = true; openMemoir(); });
+  el("family-q-open-btn").addEventListener("click", () => { el("more-menu").hidden = true; openFamilyQuestions(); });
+  el("fq-back-btn").addEventListener("click", closeFamilyQuestions);
+  el("fq-submit-btn").addEventListener("click", submitFamilyQuestion);
+  el("customize-btn").addEventListener("click", () => { el("more-menu").hidden = true; if (currentPerson) showIntake(currentPerson); });
+  el("switch-person-btn").addEventListener("click", goToPeople);
+  el("switch-person-btn-2").addEventListener("click", goToPeople);
+  el("back-btn").addEventListener("click", closeMemoir);
+  el("goto-memoir-btn").addEventListener("click", openMemoir);
+  el("review-btn").addEventListener("click", () => { mainIndex = 0; pendingExtra = null; extraChainDepth = 0; renderQuestion(); });
+  el("regenerate-btn").addEventListener("click", generateMemoir);
+  el("download-btn").addEventListener("click", downloadMemoir);
+  el("mute-btn").addEventListener("click", () => {
+    ttsMuted = !ttsMuted;
+    try { localStorage.setItem("memoir_tts_muted", ttsMuted ? "1" : "0"); } catch(e) {}
+    updateMuteLabel();
+    if (ttsMuted && "speechSynthesis" in window) window.speechSynthesis.cancel();
+  });
+  updateMuteLabel();
+  el("start-btn").addEventListener("click", () => {
+    if (mainIndex >= MASTER.length) renderDone(); else renderQuestion();
+  });
+
+  el("add-person-btn").addEventListener("click", () => { resetAddPersonForm(); showScreen("add-person"); });
+  el("cancel-add-btn").addEventListener("click", () => { resetAddPersonForm(); showScreen("people"); });
+  el("custom-label").addEventListener("input", () => {
+    if (selectedPreset === "custom") el("confirm-add-btn").disabled = el("custom-label").value.trim() === "";
+  });
+  el("confirm-add-btn").addEventListener("click", async () => {
+    if (!selectedPreset) return;
+    if (selectedPreset === "custom") {
+      const label = el("custom-label").value.trim();
+      if (!label) return;
+      const spouseTerm = el("custom-spouse").value.trim() || "老伴";
+      await createPerson({ label, spouseTerm });
+    } else {
+      await createPerson(selectedPreset);
+    }
+    resetAddPersonForm();
+  });
+
+  el("generate-questions-btn").addEventListener("click", async () => {
+    const person = intakePerson;
+    if (!person) return;
+    const traj = el("traj-input").value.trim();
+    const speechLang = el("speech-lang-select").value || "zh-CN";
+    if (!traj) { el("intake-status").textContent = "写几句您的经历吧，哪怕很简单也行。"; return; }
+    const btn = el("generate-questions-btn");
+    btn.disabled = true; btn.textContent = "正在设计专属问题…";
+    el("intake-status").textContent = "";
+    const custom = await generateCustomChapters(person, traj);
+    person.customChapters = custom;
+    person.traj = traj;
+    person.speechLang = speechLang;
+    if (person.progressIndex > EARLY_QUESTION_COUNT) person.progressIndex = EARLY_QUESTION_COUNT;
+    await updatePerson(person.id, { customChapters: custom, traj, speechLang, progressIndex: person.progressIndex });
+    btn.disabled = false; btn.textContent = "生成专属问题";
+    if (custom.length === 0 && !el("intake-status").textContent) {
+      el("intake-status").textContent = "这段描述里没找到特别独立的经历，先用通用问题，随时可以再回来补充。";
+    }
+    await selectPerson(person);
+  });
+
+  el("skip-intake-btn").addEventListener("click", async () => {
+    if (!intakePerson) return;
+    const speechLang = el("speech-lang-select").value || "zh-CN";
+    intakePerson.speechLang = speechLang;
+    await updatePerson(intakePerson.id, { speechLang });
+    await selectPerson(intakePerson);
+  });
+}
+
+async function init(){
+  wireUI();
+  renderPresetChips();
+  peopleList = await fetchPeopleList();
+  renderPeopleList();
+  showScreen("people");
+}
+
+init();
+</script>
+</body>
+</html>
